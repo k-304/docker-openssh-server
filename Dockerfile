@@ -31,6 +31,7 @@ RUN \
   sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config && \
   sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/g' /etc/ssh/sshd_config && \
   sed -i 's/#Port 22/Port 2222/g' /etc/ssh/sshd_config && \
+  sed -i 's/AllowTcpForwarding no/AllowTcpForwarding yes/g' /etc/ssh/sshd_config && \
   echo 'AuthorizedKeysFile      /root/.ssh/authorized_keys' > /etc/ssh/sshd_config.d/auth_keys.conf && \
   usermod --shell /bin/bash abc && \
   rm -rf \
