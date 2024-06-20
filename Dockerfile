@@ -23,15 +23,26 @@ RUN \
   fi && \
   apk add --no-cache \
     openssh-client==${OPENSSH_RELEASE} \
+    openssh-server==${OPENSSH_RELEASE} \
     openssh-server-pam==${OPENSSH_RELEASE} \
     openssh-sftp-server==${OPENSSH_RELEASE} && \
   printf "Linuxserver.io version: ${VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
   echo "**** setup openssh environment ****" && \
   sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config && \
+  sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/g' /etc/ssh/sshd_config && \
+  sed -i 's/#Port 22/Port 2222/g' /etc/ssh/sshd_config && \
+  echo 'AuthorizedKeysFile      /root/.ssh/authorized_keys' > /etc/ssh/sshd_config.d/auth_keys.conf && \
   usermod --shell /bin/bash abc && \
   rm -rf \
     /tmp/* \
     $HOME/.cache
+RUN \
+  echo "**** setup openssh-server config ****" && \
+  mkdir -p /root/.ssh/ && chmod 0700 /root/.ssh && \
+  ssh-keygen -A
+RUN \
+  echo "**** set root dummy password ****" && \
+  echo 'root:dummy_passwd'|chpasswd
 
 # add local files
 COPY /root /
